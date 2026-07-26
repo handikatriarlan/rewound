@@ -477,20 +477,18 @@
       /* ── d-pad + wasd ── */
       const pad = $("#pad");
       const dirs = { up: 0, down: 0, left: 0, right: 0 };
-      const padIds = new Set();
       let cursor = { x: 0, y: 0 }, dirUsed = false;
       function padClear() {
         for (const k in dirs) dirs[k] = 0;
-        padIds.clear();
         pad.querySelectorAll("button").forEach(b => b.classList.remove("hold"));
       }
       pad.querySelectorAll("button").forEach(b => {
         const d = b.dataset.d;
-        const off = e => { dirs[d] = 0; b.classList.remove("hold"); padIds.delete(e.pointerId); };
+        const off = e => { dirs[d] = 0; b.classList.remove("hold"); };
         b.addEventListener("pointerdown", e => {
           e.stopPropagation(); e.preventDefault();
           dirs[d] = 1; dirUsed = true; b.classList.add("hold");
-          padIds.add(e.pointerId); b.setPointerCapture(e.pointerId);
+          b.setPointerCapture(e.pointerId);
         });
         b.addEventListener("pointerup", off);
         b.addEventListener("pointercancel", off);
@@ -553,8 +551,8 @@
         camTX = n.x; camTY = n.y; dotAt = performance.now();
       }
 
-      addEventListener("pointermove", e => { if (phase === "play" && !padIds.has(e.pointerId) && e.target !== muteBtn) feed(e.clientX, e.clientY); }, { passive: true });
-      addEventListener("pointerdown", e => { if (phase === "play" && !padIds.has(e.pointerId) && e.target !== muteBtn) feed(e.clientX, e.clientY); }, { passive: true });
+      addEventListener("pointermove", e => { if (phase === "play" && !coarse && e.target !== muteBtn) feed(e.clientX, e.clientY); }, { passive: true });
+      addEventListener("pointerdown", e => { if (phase === "play" && !coarse && e.target !== muteBtn) feed(e.clientX, e.clientY); }, { passive: true });
       addEventListener("keydown", e => {
         if (e.key !== "Enter" && e.key !== " ") return;
         if (/BUTTON/.test(document.activeElement?.tagName || "")) return;
@@ -578,7 +576,7 @@
         if (coarse) {
           pad.classList.add("on"); document.body.classList.add("joy");
         }
-        const t = $("#tip"); t.textContent = coarse ? "hold the arrows — or drag" : "move onto it · wasd works too";
+        const t = $("#tip"); t.textContent = coarse ? "hold the arrows to move" : "move onto it · wasd works too";
         setTimeout(() => t.classList.add("on"), 500);
         setTimeout(() => t.classList.remove("on"), 4200);
       }
@@ -813,7 +811,7 @@
         reset();
         setTimeout(() => $("#intro").classList.add("on"), reduce ? 100 : 520);
       };
-      if (coarse) $("#introSub").textContent = "keep your finger down";
+      if (coarse) $("#introSub").textContent = "steer with the arrows";
       reset();
     })();
   </script>
