@@ -159,39 +159,66 @@
       width: 0
     }
 
-    /* ── mobile joystick ── */
-    #stick {
+    /* ── mobile d-pad ── */
+    #pad {
       position: fixed;
       z-index: 3;
       left: 50%;
       transform: translateX(-50%);
       bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
-      width: 122px;
-      height: 122px;
-      border: 1px solid rgba(23, 26, 43, .28);
-      border-radius: 50%;
+      display: grid;
+      grid-template-columns: repeat(3, 58px);
+      grid-template-rows: repeat(2, 58px);
+      gap: 7px;
       opacity: 0;
       pointer-events: none;
       transition: opacity .45s ease;
       touch-action: none;
     }
 
-    #stick.on {
+    #pad.on {
       opacity: 1;
       pointer-events: auto
     }
 
-    #stick .knob {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 34px;
-      height: 34px;
-      margin: -17px 0 0 -17px;
-      border-radius: 50%;
+    #pad button {
+      font-family: var(--mono);
+      font-size: 15px;
+      color: var(--ink);
+      background: rgba(236, 238, 241, .6);
+      border: 1px solid rgba(23, 26, 43, .3);
+      border-radius: 2px;
+      padding: 0;
+      cursor: pointer;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background .12s ease, color .12s ease;
+    }
+
+    #pad button.hold {
       background: var(--ink);
-      opacity: .85;
-      will-change: transform;
+      color: var(--paper)
+    }
+
+    #pad [data-d="up"] {
+      grid-column: 2;
+      grid-row: 1
+    }
+
+    #pad [data-d="left"] {
+      grid-column: 1;
+      grid-row: 2
+    }
+
+    #pad [data-d="down"] {
+      grid-column: 2;
+      grid-row: 2
+    }
+
+    #pad [data-d="right"] {
+      grid-column: 3;
+      grid-row: 2
     }
 
     body.joy #tip {
@@ -342,17 +369,20 @@
 
   <canvas id="cv"></canvas>
 
-  <div id="count" class="chrome">00/29</div>
+  <div id="count" class="chrome">00/32</div>
   <div id="tip" class="chrome"></div>
 
   <button id="mute" aria-label="toggle sound">snd ✦ on</button>
 
-  <div id="stick" aria-hidden="true">
-    <div class="knob" id="knob"></div>
+  <div id="pad" aria-hidden="true">
+    <button data-d="up" tabindex="-1">↑</button>
+    <button data-d="left" tabindex="-1">←</button>
+    <button data-d="down" tabindex="-1">↓</button>
+    <button data-d="right" tabindex="-1">→</button>
   </div>
 
   <div id="deck">
-    <div class="lbl"><span id="deckLbl">rewinding</span><span id="deckNum">29</span></div>
+    <div class="lbl"><span id="deckLbl">rewinding</span><span id="deckNum">32</span></div>
     <div class="track">
       <div class="fill" id="fill"></div>
       <div class="head" id="head"></div>
@@ -397,7 +427,7 @@
       }
       addEventListener("resize", () => {
         resize();
-        if (phase === "play") { camTS = playScale(); }
+        if (phase === "play") { camTS = playScale(); cursor.x = sx(ptr.x); cursor.y = sy(ptr.y); }
         else if (phase !== "intro") { endCam(); }
       }); resize();
       const fitScale = () => Math.min(W * .86 / WORLD.w, H * .60 / WORLD.h);
@@ -444,31 +474,36 @@
 
       const deck = $("#deck"), fill = $("#fill"), head = $("#head");
 
-      /* ── mobile joystick ── */
-      const stick = $("#stick"), knob = $("#knob");
-      let stickId = null, stickVec = { x: 0, y: 0 }, cursor = { x: 0, y: 0 };
-      function knobFrom(e) {
-        const r = stick.getBoundingClientRect();
-        let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
-        const max = r.width / 2 - 17, len = Math.hypot(dx, dy) || 1, cl = Math.min(len, max);
-        dx = dx / len * cl; dy = dy / len * cl;
-        knob.style.transform = `translate(${dx}px,${dy}px)`;
-        stickVec.x = dx / max; stickVec.y = dy / max;
+      /* ── d-pad + wasd ── */
+      const pad = $("#pad");
+      const dirs = { up: 0, down: 0, left: 0, right: 0 };
+      const padIds = new Set();
+      let cursor = { x: 0, y: 0 }, dirUsed = false;
+      function padClear() {
+        for (const k in dirs) dirs[k] = 0;
+        padIds.clear();
+        pad.querySelectorAll("button").forEach(b => b.classList.remove("hold"));
       }
-      function knobRest() {
-        stickId = null; stickVec.x = stickVec.y = 0; knob.style.transform = "";
-      }
-      stick.addEventListener("pointerdown", e => {
-        e.stopPropagation(); stickId = e.pointerId;
-        stick.setPointerCapture(e.pointerId); knobFrom(e);
+      pad.querySelectorAll("button").forEach(b => {
+        const d = b.dataset.d;
+        const off = e => { dirs[d] = 0; b.classList.remove("hold"); padIds.delete(e.pointerId); };
+        b.addEventListener("pointerdown", e => {
+          e.stopPropagation(); e.preventDefault();
+          dirs[d] = 1; dirUsed = true; b.classList.add("hold");
+          padIds.add(e.pointerId); b.setPointerCapture(e.pointerId);
+        });
+        b.addEventListener("pointerup", off);
+        b.addEventListener("pointercancel", off);
       });
-      stick.addEventListener("pointermove", e => {
-        if (e.pointerId !== stickId) return;
-        e.stopPropagation(); knobFrom(e);
+      const KEYMAP = {
+        ArrowUp: "up", KeyW: "up", ArrowDown: "down", KeyS: "down",
+        ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right"
+      };
+      addEventListener("keydown", e => {
+        const d = KEYMAP[e.code];
+        if (d && phase === "play") { e.preventDefault(); dirs[d] = 1; dirUsed = true; }
       });
-      stick.addEventListener("pointerup", e => { if (e.pointerId === stickId) knobRest(); });
-      stick.addEventListener("pointercancel", e => { if (e.pointerId === stickId) knobRest(); });
-      stick.addEventListener("lostpointercapture", () => knobRest());
+      addEventListener("keyup", e => { const d = KEYMAP[e.code]; if (d) dirs[d] = 0; });
 
       function reset() {
         cur = 0; pen = false; rec = STROKES.map(() => []); comet = []; heartHeat = 0;
@@ -518,8 +553,8 @@
         camTX = n.x; camTY = n.y; dotAt = performance.now();
       }
 
-      addEventListener("pointermove", e => { if (phase === "play" && e.pointerId !== stickId) feed(e.clientX, e.clientY); }, { passive: true });
-      addEventListener("pointerdown", e => { if (phase === "play" && e.pointerId !== stickId) feed(e.clientX, e.clientY); }, { passive: true });
+      addEventListener("pointermove", e => { if (phase === "play" && !padIds.has(e.pointerId) && e.target !== muteBtn) feed(e.clientX, e.clientY); }, { passive: true });
+      addEventListener("pointerdown", e => { if (phase === "play" && !padIds.has(e.pointerId) && e.target !== muteBtn) feed(e.clientX, e.clientY); }, { passive: true });
       addEventListener("keydown", e => {
         if (e.key !== "Enter" && e.key !== " ") return;
         if (/BUTTON/.test(document.activeElement?.tagName || "")) return;
@@ -539,11 +574,11 @@
         A(); reset(); phase = "play"; tPhase = performance.now();
         $("#intro").classList.remove("on");
         $("#count").classList.add("on");
+        cursor.x = sx(ptr.x); cursor.y = sy(ptr.y);
         if (coarse) {
-          cursor.x = sx(ptr.x); cursor.y = sy(ptr.y);
-          stick.classList.add("on"); document.body.classList.add("joy");
+          pad.classList.add("on"); document.body.classList.add("joy");
         }
-        const t = $("#tip"); t.textContent = coarse ? "steer with the pad — or drag" : "move onto it";
+        const t = $("#tip"); t.textContent = coarse ? "hold the arrows — or drag" : "move onto it · wasd works too";
         setTimeout(() => t.classList.add("on"), 500);
         setTimeout(() => t.classList.remove("on"), 4200);
       }
@@ -568,7 +603,7 @@
       function toStop() {
         phase = "stop"; tPhase = performance.now(); measure();
         $("#count").classList.remove("on");
-        stick.classList.remove("on"); document.body.classList.remove("joy"); knobRest();
+        pad.classList.remove("on"); document.body.classList.remove("joy"); padClear();
         $("#deckLbl").textContent = "stopped"; $("#deckNum").textContent = N;
         fill.style.width = "100%"; head.style.transform = "translateX(100%)";
         deck.classList.add("on");
@@ -653,10 +688,12 @@
       function frame(now) {
         requestAnimationFrame(frame);
         const dt = Math.min(50, now - (frame.t || now)); frame.t = now;
-        if (phase === "play" && (stickVec.x || stickVec.y)) {
+        const mvx = dirs.right - dirs.left, mvy = dirs.down - dirs.up;
+        if (phase === "play" && (mvx || mvy)) {
+          const nrm = (mvx && mvy) ? Math.SQRT1_2 : 1, sp = .5 * dt;
           feed(
-            Math.max(0, Math.min(W, cursor.x + stickVec.x * .62 * dt)),
-            Math.max(0, Math.min(H, cursor.y + stickVec.y * .62 * dt))
+            Math.max(0, Math.min(W, cursor.x + mvx * nrm * sp)),
+            Math.max(0, Math.min(H, cursor.y + mvy * nrm * sp))
           );
         }
         const slow = (phase === "stop" || phase === "rewind" || phase === "ready");
@@ -683,7 +720,7 @@
           ctx.fillStyle = "#171a2b";
           ctx.beginPath(); ctx.arc(px, py, 4.5, 0, 7); ctx.fill();
           ctx.globalAlpha = 1;
-          if (coarse) {
+          if (coarse || dirUsed) {
             const ux = sx(ptr.x), uy = sy(ptr.y);
             ctx.strokeStyle = "rgba(225,72,60,.85)"; ctx.lineWidth = 1.5;
             ctx.beginPath(); ctx.arc(ux, uy, 8, 0, 7); ctx.stroke();
