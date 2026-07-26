@@ -159,6 +159,71 @@
       width: 0
     }
 
+    /* ── mobile joystick ── */
+    #stick {
+      position: fixed;
+      z-index: 3;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
+      width: 122px;
+      height: 122px;
+      border: 1px solid rgba(23, 26, 43, .28);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .45s ease;
+      touch-action: none;
+    }
+
+    #stick.on {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    #stick .knob {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 34px;
+      height: 34px;
+      margin: -17px 0 0 -17px;
+      border-radius: 50%;
+      background: var(--ink);
+      opacity: .85;
+      will-change: transform;
+    }
+
+    body.joy #tip {
+      bottom: max(172px, calc(env(safe-area-inset-bottom) + 162px));
+    }
+
+    /* ── sound toggle ── */
+    #mute {
+      position: fixed;
+      z-index: 6;
+      top: max(18px, env(safe-area-inset-top));
+      left: 18px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .14em;
+      color: var(--mute);
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      transition: color .18s ease;
+    }
+
+    #mute:hover {
+      color: var(--ink)
+    }
+
+    #mute:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px
+    }
+
     /* ── sheets ── */
     .sheet {
       position: fixed;
@@ -280,6 +345,12 @@
   <div id="count" class="chrome">00/29</div>
   <div id="tip" class="chrome"></div>
 
+  <button id="mute" aria-label="toggle sound">snd ✦ on</button>
+
+  <div id="stick" aria-hidden="true">
+    <div class="knob" id="knob"></div>
+  </div>
+
   <div id="deck">
     <div class="lbl"><span id="deckLbl">rewinding</span><span id="deckNum">29</span></div>
     <div class="track">
@@ -301,8 +372,6 @@
     <div class="row">
       <button class="b" id="again">again</button>
     </div>
-  </div>
-
   </div>
 
   <script>
@@ -343,6 +412,7 @@
 
       /* ── sound ── */
       let ac = null, muted = false;
+      try { muted = localStorage.getItem("rw-muted") === "1" } catch { }
       const A = () => { ac ||= new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === "suspended") ac.resume(); return ac; };
       function note(f, dur = .28, type = "triangle", vol = .08, slide = 0) {
         if (muted) return;
@@ -374,6 +444,32 @@
 
       const deck = $("#deck"), fill = $("#fill"), head = $("#head");
 
+      /* ── mobile joystick ── */
+      const stick = $("#stick"), knob = $("#knob");
+      let stickId = null, stickVec = { x: 0, y: 0 }, cursor = { x: 0, y: 0 };
+      function knobFrom(e) {
+        const r = stick.getBoundingClientRect();
+        let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+        const max = r.width / 2 - 17, len = Math.hypot(dx, dy) || 1, cl = Math.min(len, max);
+        dx = dx / len * cl; dy = dy / len * cl;
+        knob.style.transform = `translate(${dx}px,${dy}px)`;
+        stickVec.x = dx / max; stickVec.y = dy / max;
+      }
+      function knobRest() {
+        stickId = null; stickVec.x = stickVec.y = 0; knob.style.transform = "";
+      }
+      stick.addEventListener("pointerdown", e => {
+        e.stopPropagation(); stickId = e.pointerId;
+        stick.setPointerCapture(e.pointerId); knobFrom(e);
+      });
+      stick.addEventListener("pointermove", e => {
+        if (e.pointerId !== stickId) return;
+        e.stopPropagation(); knobFrom(e);
+      });
+      stick.addEventListener("pointerup", e => { if (e.pointerId === stickId) knobRest(); });
+      stick.addEventListener("pointercancel", e => { if (e.pointerId === stickId) knobRest(); });
+      stick.addEventListener("lostpointercapture", () => knobRest());
+
       function reset() {
         cur = 0; pen = false; rec = STROKES.map(() => []); comet = []; heartHeat = 0;
         camS = playScale(); camTS = camS;
@@ -384,6 +480,7 @@
 
       /* ── input ── */
       function feed(px, py) {
+        cursor.x = px; cursor.y = py;
         ptr.x = wx(px); ptr.y = wy(py);
         comet.push({ x: ptr.x, y: ptr.y, t: performance.now() });
         if (comet.length > 26) comet.shift();
@@ -421,8 +518,8 @@
         camTX = n.x; camTY = n.y; dotAt = performance.now();
       }
 
-      addEventListener("pointermove", e => { if (phase === "play") feed(e.clientX, e.clientY); }, { passive: true });
-      addEventListener("pointerdown", e => { if (phase === "play") feed(e.clientX, e.clientY); }, { passive: true });
+      addEventListener("pointermove", e => { if (phase === "play" && e.pointerId !== stickId) feed(e.clientX, e.clientY); }, { passive: true });
+      addEventListener("pointerdown", e => { if (phase === "play" && e.pointerId !== stickId) feed(e.clientX, e.clientY); }, { passive: true });
       addEventListener("keydown", e => {
         if (e.key !== "Enter" && e.key !== " ") return;
         if (/BUTTON/.test(document.activeElement?.tagName || "")) return;
@@ -442,7 +539,11 @@
         A(); reset(); phase = "play"; tPhase = performance.now();
         $("#intro").classList.remove("on");
         $("#count").classList.add("on");
-        const t = $("#tip"); t.textContent = coarse ? "drag your finger onto it" : "move onto it";
+        if (coarse) {
+          cursor.x = sx(ptr.x); cursor.y = sy(ptr.y);
+          stick.classList.add("on"); document.body.classList.add("joy");
+        }
+        const t = $("#tip"); t.textContent = coarse ? "steer with the pad — or drag" : "move onto it";
         setTimeout(() => t.classList.add("on"), 500);
         setTimeout(() => t.classList.remove("on"), 4200);
       }
@@ -467,6 +568,7 @@
       function toStop() {
         phase = "stop"; tPhase = performance.now(); measure();
         $("#count").classList.remove("on");
+        stick.classList.remove("on"); document.body.classList.remove("joy"); knobRest();
         $("#deckLbl").textContent = "stopped"; $("#deckNum").textContent = N;
         fill.style.width = "100%"; head.style.transform = "translateX(100%)";
         deck.classList.add("on");
@@ -550,6 +652,13 @@
 
       function frame(now) {
         requestAnimationFrame(frame);
+        const dt = Math.min(50, now - (frame.t || now)); frame.t = now;
+        if (phase === "play" && (stickVec.x || stickVec.y)) {
+          feed(
+            Math.max(0, Math.min(W, cursor.x + stickVec.x * .62 * dt)),
+            Math.max(0, Math.min(H, cursor.y + stickVec.y * .62 * dt))
+          );
+        }
         const slow = (phase === "stop" || phase === "rewind" || phase === "ready");
         camS += (camTS - camS) * (reduce ? 1 : (slow ? .035 : .09));
         const dd = Math.hypot(camTX - camX, camTY - camY);
@@ -574,6 +683,13 @@
           ctx.fillStyle = "#171a2b";
           ctx.beginPath(); ctx.arc(px, py, 4.5, 0, 7); ctx.fill();
           ctx.globalAlpha = 1;
+          if (coarse) {
+            const ux = sx(ptr.x), uy = sy(ptr.y);
+            ctx.strokeStyle = "rgba(225,72,60,.85)"; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(ux, uy, 8, 0, 7); ctx.stroke();
+            ctx.fillStyle = "#e1483c";
+            ctx.beginPath(); ctx.arc(ux, uy, 2.2, 0, 7); ctx.fill();
+          }
         }
 
         if (phase === "rewind") {
@@ -643,6 +759,15 @@
       requestAnimationFrame(frame);
 
       /* ── chrome ── */
+      const muteBtn = $("#mute");
+      const muteLbl = () => { muteBtn.textContent = muted ? "snd ✦ off" : "snd ✦ on"; };
+      muteBtn.onclick = () => {
+        muted = !muted; muteLbl();
+        try { localStorage.setItem("rw-muted", muted ? "1" : "0") } catch { }
+        if (!muted) note(523, .18, "sine", .06);
+      };
+      muteLbl();
+
       $("#start").onclick = toPlay;
       $("#again").onclick = () => {
         $("#end").classList.remove("on");
