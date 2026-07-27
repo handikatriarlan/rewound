@@ -4,7 +4,7 @@ A one-minute browser game: follow the dot.
 
 ## Play
 
-- Live: https://rewound.handikatriarlan.dev/
+- Live: https://rewound.handikatriarlan.dev
 - Controls: mouse/touch, or keyboard (`WASD` / arrow keys)
 
 ## Run locally
