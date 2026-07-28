@@ -2,44 +2,51 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <meta name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+    content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no" />
   <title>rewound · follow the dot</title>
   <meta name="description"
-    content="A one-minute game. Follow the dot — that's all. What happens after the last one is between you and whoever sent you this.">
-  <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#eceef1">
+    content="A one-minute game. Follow the dot — that's all. What happens after the last one is between you and whoever sent you this." />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#eceef1" />
 
-  <link rel="canonical" href="https://rewound.handikatriarlan.dev/">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="rewound">
-  <meta property="og:title" content="rewound · follow the dot">
-  <meta property="og:description" content="A one-minute game. That's all you need to know.">
-  <meta property="og:url" content="https://rewound.handikatriarlan.dev/">
-  <meta property="og:image" content="https://rewound.handikatriarlan.dev/og.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="rewound · follow the dot">
-  <meta name="twitter:description" content="A one-minute game. That's all you need to know.">
-  <meta name="twitter:image" content="https://rewound.handikatriarlan.dev/og.png">
+  <link rel="canonical" href="https://rewound.handikatriarlan.dev/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="rewound" />
+  <meta property="og:title" content="rewound · follow the dot" />
+  <meta property="og:description" content="A one-minute game. That's all you need to know." />
+  <meta property="og:url" content="https://rewound.handikatriarlan.dev/" />
+  <meta property="og:image" content="https://rewound.handikatriarlan.dev/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="rewound · follow the dot" />
+  <meta name="twitter:description" content="A one-minute game. That's all you need to know." />
+  <meta name="twitter:image" content="https://rewound.handikatriarlan.dev/og.png" />
   <!-- ▲ -->
 
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
 
   <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"VideoGame","name":"rewound",
-"description":"A one-minute browser game: follow the dot.","genre":"casual",
-"playMode":"SinglePlayer","applicationCategory":"Game","operatingSystem":"Any",
-"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
-</script>
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "rewound",
+        "description": "A one-minute browser game: follow the dot.",
+        "genre": "casual",
+        "playMode": "SinglePlayer",
+        "applicationCategory": "Game",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
       --paper: #eceef1;
@@ -51,14 +58,14 @@
 
     * {
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent
+      -webkit-tap-highlight-color: transparent;
     }
 
     html,
     body {
       height: 100%;
       margin: 0;
-      overscroll-behavior: none
+      overscroll-behavior: none;
     }
 
     body {
@@ -66,7 +73,7 @@
       color: var(--ink);
       font-family: var(--mono);
       font-size: 12px;
-      letter-spacing: .02em;
+      letter-spacing: 0.02em;
       overflow: hidden;
       user-select: none;
       touch-action: none;
@@ -78,7 +85,7 @@
       width: 100%;
       height: 100%;
       display: block;
-      touch-action: none
+      touch-action: none;
     }
 
     .chrome {
@@ -86,19 +93,19 @@
       z-index: 3;
       color: var(--mute);
       font-size: 11px;
-      letter-spacing: .14em;
+      letter-spacing: 0.14em;
       opacity: 0;
-      transition: opacity .5s ease;
+      transition: opacity 0.5s ease;
       pointer-events: none;
     }
 
     .chrome.on {
-      opacity: 1
+      opacity: 1;
     }
 
     #count {
       top: max(18px, env(safe-area-inset-top));
-      right: 18px
+      right: 18px;
     }
 
     #tip {
@@ -106,7 +113,7 @@
       right: 0;
       bottom: max(30px, calc(env(safe-area-inset-bottom) + 20px));
       text-align: center;
-      letter-spacing: .16em;
+      letter-spacing: 0.16em;
     }
 
     /* ── tape deck ── */
@@ -118,11 +125,11 @@
       bottom: max(26px, calc(env(safe-area-inset-bottom) + 16px));
       width: min(78vw, 520px);
       opacity: 0;
-      transition: opacity .45s ease;
+      transition: opacity 0.45s ease;
     }
 
     #deck.on {
-      opacity: 1
+      opacity: 1;
     }
 
     #deck .lbl {
@@ -130,14 +137,14 @@
       justify-content: space-between;
       color: var(--mute);
       font-size: 10px;
-      letter-spacing: .2em;
-      margin-bottom: 9px
+      letter-spacing: 0.2em;
+      margin-bottom: 9px;
     }
 
     #deck .track {
       position: relative;
       height: 1px;
-      background: rgba(23, 26, 43, .18)
+      background: rgba(23, 26, 43, 0.18);
     }
 
     #deck .head {
@@ -156,10 +163,8 @@
       left: 0;
       height: 1px;
       background: var(--ink);
-      width: 0
+      width: 0;
     }
-
-
 
     /* ── sound toggle ── */
     #mute {
@@ -169,22 +174,22 @@
       left: 18px;
       font-family: var(--mono);
       font-size: 11px;
-      letter-spacing: .14em;
+      letter-spacing: 0.14em;
       color: var(--mute);
       background: none;
       border: none;
       padding: 4px;
       cursor: pointer;
-      transition: color .18s ease;
+      transition: color 0.18s ease;
     }
 
     #mute:hover {
-      color: var(--ink)
+      color: var(--ink);
     }
 
     #mute:focus-visible {
       outline: 2px solid var(--ink);
-      outline-offset: 3px
+      outline-offset: 3px;
     }
 
     /* ── sheets ── */
@@ -201,48 +206,51 @@
       text-align: center;
       opacity: 0;
       pointer-events: none;
-      transition: opacity .6s ease;
+      transition: opacity 0.6s ease;
     }
 
     .sheet.on {
       opacity: 1;
-      pointer-events: auto
+      pointer-events: auto;
     }
 
     #intro h1 {
       font-family: var(--mono);
       font-weight: 400;
       font-size: clamp(1.6rem, 6.4vw, 2.2rem);
-      letter-spacing: -.01em;
+      letter-spacing: -0.01em;
       margin: 0;
     }
 
     #intro p {
       margin: 0;
       color: var(--mute);
-      letter-spacing: .14em;
-      font-size: 11px
+      letter-spacing: 0.14em;
+      font-size: 11px;
     }
 
     /* the end sheet sits below the drawing, not over it */
     #end {
       justify-content: flex-end;
-      background: linear-gradient(180deg, rgba(236, 238, 241, 0) 0%, rgba(236, 238, 241, 0) 46%, var(--paper) 72%);
+      background: linear-gradient(180deg,
+          rgba(236, 238, 241, 0) 0%,
+          rgba(236, 238, 241, 0) 46%,
+          var(--paper) 72%);
     }
 
     #end .drew {
       color: var(--mute);
-      letter-spacing: .16em;
+      letter-spacing: 0.16em;
       font-size: 11px;
-      margin: 0
+      margin: 0;
     }
 
     #end .stamp {
       color: var(--mute);
-      letter-spacing: .2em;
+      letter-spacing: 0.2em;
       font-size: 9.5px;
       margin: 2px 0 0;
-      opacity: .7
+      opacity: 0.7;
     }
 
     #end .msg {
@@ -254,31 +262,34 @@
     }
 
     #end .msg:empty {
-      display: none
+      display: none;
     }
 
     button.b {
       font-family: var(--mono);
       font-size: 11px;
-      letter-spacing: .16em;
+      letter-spacing: 0.16em;
       color: var(--ink);
       background: none;
-      border: 1px solid rgba(23, 26, 43, .35);
+      border: 1px solid rgba(23, 26, 43, 0.35);
       border-radius: 2px;
-      padding: .85em 1.7em;
+      padding: 0.85em 1.7em;
       cursor: pointer;
-      transition: background .18s ease, color .18s ease, border-color .18s ease;
+      transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        border-color 0.18s ease;
     }
 
     button.b:hover {
       background: var(--ink);
       color: var(--paper);
-      border-color: var(--ink)
+      border-color: var(--ink);
     }
 
     button.b:focus-visible {
       outline: 2px solid var(--ink);
-      outline-offset: 3px
+      outline-offset: 3px;
     }
 
     .row {
@@ -286,12 +297,12 @@
       gap: 9px;
       flex-wrap: wrap;
       justify-content: center;
-      margin-top: 6px
+      margin-top: 6px;
     }
 
-    @media (prefers-reduced-motion:reduce) {
+    @media (prefers-reduced-motion: reduce) {
       * {
-        transition-duration: .1s !important
+        transition-duration: 0.1s !important;
       }
     }
   </style>
@@ -299,8 +310,10 @@
 
 <body>
   <noscript>
-    <p style="font-family:monospace;padding:2rem;color:#171a2b">rewound needs JavaScript — it's a tiny game, nothing
-      more. Enable JS and reload.</p>
+    <p style="font-family: monospace; padding: 2rem; color: #171a2b">
+      rewound needs JavaScript — it's a tiny game, nothing more. Enable JS and
+      reload.
+    </p>
   </noscript>
 
   <canvas id="cv"></canvas>
@@ -310,11 +323,10 @@
 
   <button id="mute" aria-label="toggle sound">snd ✦ on</button>
 
-    <button data-d="right" tabindex="-1">→</button>
-  </div>
-
   <div id="deck">
-    <div class="lbl"><span id="deckLbl">rewinding</span><span id="deckNum">32</span></div>
+    <div class="lbl">
+      <span id="deckLbl">rewinding</span><span id="deckNum">32</span>
+    </div>
     <div class="track">
       <div class="fill" id="fill"></div>
       <div class="head" id="head"></div>
@@ -339,104 +351,240 @@
   <script>
     (() => {
       "use strict";
-      const $ = s => document.querySelector(s);
+      const $ = (s) => document.querySelector(s);
       const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
       const coarse = matchMedia("(pointer: coarse)").matches;
 
       /* ── the shape you'll trace, without knowing it ── */
-      const STROKES = [[[76, 90], [164, 90]], [[120, 90], [120, 193], [120, 297], [120, 400]], [[76, 400], [164, 400]], [[495, 395], [485, 371], [432, 317], [363, 250], [344, 175], [395, 122], [464, 132], [494, 176], [526, 132], [595, 122], [646, 175], [627, 250], [558, 317], [505, 371], [495, 395]], [[770, 178], [770, 258], [772, 330], [800, 382], [848, 400], [896, 380], [912, 322], [912, 248], [912, 178]]];
+      const STROKES = [
+        [
+          [76, 90],
+          [164, 90],
+        ],
+        [
+          [120, 90],
+          [120, 193],
+          [120, 297],
+          [120, 400],
+        ],
+        [
+          [76, 400],
+          [164, 400],
+        ],
+        [
+          [495, 395],
+          [485, 371],
+          [432, 317],
+          [363, 250],
+          [344, 175],
+          [395, 122],
+          [464, 132],
+          [494, 176],
+          [526, 132],
+          [595, 122],
+          [646, 175],
+          [627, 250],
+          [558, 317],
+          [505, 371],
+          [495, 395],
+        ],
+        [
+          [770, 178],
+          [770, 258],
+          [772, 330],
+          [800, 382],
+          [848, 400],
+          [896, 380],
+          [912, 322],
+          [912, 248],
+          [912, 178],
+        ],
+      ];
       const HEART_STROKE = 3;
       const WORLD = { w: 1032, h: 488, cx: 516, cy: 244 };
-      const DOTS = []; STROKES.forEach((s, si) => s.forEach((p, pi) => DOTS.push({ x: p[0], y: p[1], si, pi, last: pi === s.length - 1, first: pi === 0 })));
+      const DOTS = [];
+      STROKES.forEach((s, si) =>
+        s.forEach((p, pi) =>
+          DOTS.push({
+            x: p[0],
+            y: p[1],
+            si,
+            pi,
+            last: pi === s.length - 1,
+            first: pi === 0,
+          }),
+        ),
+      );
       const N = DOTS.length;
 
       /* ── canvas ── */
-      const cv = $("#cv"), ctx = cv.getContext("2d");
-      let W = 0, H = 0, DPR = 1;
+      const cv = $("#cv"),
+        ctx = cv.getContext("2d");
+      let W = 0,
+        H = 0,
+        DPR = 1;
       function resize() {
-        DPR = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
-        cv.width = W * DPR; cv.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        DPR = Math.min(devicePixelRatio || 1, 2);
+        W = innerWidth;
+        H = innerHeight;
+        cv.width = W * DPR;
+        cv.height = H * DPR;
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       }
       addEventListener("resize", () => {
         resize();
-        if (phase === "play") { camTS = playScale(); cursor.x = sx(ptr.x); cursor.y = sy(ptr.y); }
-        else if (phase !== "intro") { endCam(); }
-      }); resize();
-      const fitScale = () => Math.min(W * .86 / WORLD.w, H * .60 / WORLD.h);
+        if (phase === "play") {
+          camTS = playScale();
+          cursor.x = sx(ptr.x);
+          cursor.y = sy(ptr.y);
+        } else if (phase !== "intro") {
+          endCam();
+        }
+      });
+      resize();
+      const fitScale = () =>
+        Math.min((W * 0.86) / WORLD.w, (H * 0.6) / WORLD.h);
       const playScale = () => Math.max(1.4, fitScale() * 1.55);
-      let camS = 1, camX = WORLD.cx, camY = WORLD.cy;
+      let camS = 1,
+        camX = WORLD.cx,
+        camY = WORLD.cy;
       function endCam() {
-        camTS = fitScale(); camTX = WORLD.cx;
-        camTY = WORLD.cy + (H * .09) / fitScale();   // sit the drawing above the end sheet
+        camTS = fitScale();
+        camTX = WORLD.cx;
+        camTY = WORLD.cy + (H * 0.09) / fitScale(); // sit the drawing above the end sheet
       }
-      const sx = x => (x - camX) * camS + W / 2, sy = y => (y - camY) * camS + H / 2;
-      const wx = x => (x - W / 2) / camS + camX, wy = y => (y - H / 2) / camS + camY;
+      const sx = (x) => (x - camX) * camS + W / 2,
+        sy = (y) => (y - camY) * camS + H / 2;
+      const wx = (x) => (x - W / 2) / camS + camX,
+        wy = (y) => (y - H / 2) / camS + camY;
 
       /* ── sound ── */
-      let ac = null, muted = false;
-      try { muted = localStorage.getItem("rw-muted") === "1" } catch { }
-      const A = () => { ac ||= new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === "suspended") ac.resume(); return ac; };
-      function note(f, dur = .28, type = "triangle", vol = .08, slide = 0) {
+      let ac = null,
+        muted = false;
+      try {
+        muted = localStorage.getItem("rw-muted") === "1";
+      } catch { }
+      const A = () => {
+        ac ||= new (window.AudioContext || window.webkitAudioContext)();
+        if (ac.state === "suspended") ac.resume();
+        return ac;
+      };
+      function note(f, dur = 0.28, type = "triangle", vol = 0.08, slide = 0) {
         if (muted) return;
-        const a = A(), o = a.createOscillator(), g = a.createGain();
-        o.type = type; o.frequency.setValueAtTime(f, a.currentTime);
-        if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, f * slide), a.currentTime + dur);
+        const a = A(),
+          o = a.createOscillator(),
+          g = a.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(f, a.currentTime);
+        if (slide)
+          o.frequency.exponentialRampToValueAtTime(
+            Math.max(40, f * slide),
+            a.currentTime + dur,
+          );
         g.gain.setValueAtTime(0, a.currentTime);
-        g.gain.linearRampToValueAtTime(vol, a.currentTime + .01);
-        g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + dur);
-        o.connect(g).connect(a.destination); o.start(); o.stop(a.currentTime + dur + .04);
+        g.gain.linearRampToValueAtTime(vol, a.currentTime + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + dur);
+        o.connect(g).connect(a.destination);
+        o.start();
+        o.stop(a.currentTime + dur + 0.04);
       }
       const PENTA = [0, 2, 4, 7, 9];
-      const pitch = i => 220 * Math.pow(2, (PENTA[i % 5] + 12 * Math.floor(i / 5)) / 12);
+      const pitch = (i) =>
+        220 * Math.pow(2, (PENTA[i % 5] + 12 * Math.floor(i / 5)) / 12);
 
       /* ── message ── */
-      const dec = s => { try { return new TextDecoder().decode(Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0))) } catch { return null } };
+      const dec = (s) => {
+        try {
+          return new TextDecoder().decode(
+            Uint8Array.from(
+              atob(s.replace(/-/g, "+").replace(/_/g, "/")),
+              (c) => c.charCodeAt(0),
+            ),
+          );
+        } catch {
+          return null;
+        }
+      };
       const param = new URLSearchParams(location.search).get("m");
       const MESSAGE = (param && dec(param)) || "";
 
       /* ── state ── */
       let phase = "intro";
-      let cur = 0;                       // active dot index
+      let cur = 0; // active dot index
       let pen = false;
-      let rec = STROKES.map(() => []);     // what you actually traced
-      let ptr = { x: WORLD.cx, y: WORLD.cy }, comet = [];
+      let rec = STROKES.map(() => []); // what you actually traced
+      let ptr = { x: WORLD.cx, y: WORLD.cy },
+        comet = [];
       let tPhase = 0;
-      let camTS = 1, camTX = WORLD.cx, camTY = WORLD.cy;
-      let heartHeat = 0, heatOn = false, dotAt = 0, floats = [];
+      let camTS = 1,
+        camTX = WORLD.cx,
+        camTY = WORLD.cy;
+      let heartHeat = 0,
+        heatOn = false,
+        dotAt = 0,
+        floats = [];
 
-      const deck = $("#deck"), fill = $("#fill"), head = $("#head");
+      const deck = $("#deck"),
+        fill = $("#fill"),
+        head = $("#head");
 
       /* ── input ── */
       const dirs = { up: 0, down: 0, left: 0, right: 0 };
-      let cursor = { x: 0, y: 0 }, dirUsed = false;
-      function padClear() { for (const k in dirs) dirs[k] = 0; }
+      let cursor = { x: 0, y: 0 },
+        dirUsed = false;
+      function padClear() {
+        for (const k in dirs) dirs[k] = 0;
+      }
       const KEYMAP = {
-        ArrowUp: "up", KeyW: "up", ArrowDown: "down", KeyS: "down",
-        ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right"
+        ArrowUp: "up",
+        KeyW: "up",
+        ArrowDown: "down",
+        KeyS: "down",
+        ArrowLeft: "left",
+        KeyA: "left",
+        ArrowRight: "right",
+        KeyD: "right",
       };
-      addEventListener("keydown", e => {
+      addEventListener("keydown", (e) => {
         const d = KEYMAP[e.code];
-        if (d && phase === "play") { e.preventDefault(); dirs[d] = 1; dirUsed = true; }
+        if (d && phase === "play") {
+          e.preventDefault();
+          dirs[d] = 1;
+          dirUsed = true;
+        }
       });
-      addEventListener("keyup", e => { const d = KEYMAP[e.code]; if (d) dirs[d] = 0; });
+      addEventListener("keyup", (e) => {
+        const d = KEYMAP[e.code];
+        if (d) dirs[d] = 0;
+      });
 
       function reset() {
-        cur = 0; pen = false; rec = STROKES.map(() => []); comet = []; heartHeat = 0;
-        camS = playScale(); camTS = camS;
-        camX = camTX = DOTS[0].x; camY = camTY = DOTS[0].y;
+        cur = 0;
+        pen = false;
+        rec = STROKES.map(() => []);
+        comet = [];
+        heartHeat = 0;
+        camS = playScale();
+        camTS = camS;
+        camX = camTX = DOTS[0].x;
+        camY = camTY = DOTS[0].y;
         ptr = { x: DOTS[0].x, y: DOTS[0].y + 90 };
         $("#count").textContent = "00/" + N;
       }
 
       /* ── input ── */
       function feed(px, py) {
-        cursor.x = px; cursor.y = py;
-        ptr.x = wx(px); ptr.y = wy(py);
+        cursor.x = px;
+        cursor.y = py;
+        ptr.x = wx(px);
+        ptr.y = wy(py);
         comet.push({ x: ptr.x, y: ptr.y, t: performance.now() });
         if (comet.length > 26) comet.shift();
         if (pen) {
-          const s = rec[DOTS[cur].si], l = s[s.length - 1];
-          if (!l || Math.hypot(ptr.x - l.x, ptr.y - l.y) > 3.2) s.push({ x: ptr.x, y: ptr.y });
+          const s = rec[DOTS[cur].si],
+            l = s[s.length - 1];
+          if (!l || Math.hypot(ptr.x - l.x, ptr.y - l.y) > 3.2)
+            s.push({ x: ptr.x, y: ptr.y });
         }
         check();
       }
@@ -450,165 +598,272 @@
       let sparks = [];
       function burst(x, y, c) {
         for (let i = 0; i < 9; i++) {
-          const a = Math.random() * Math.PI * 2, v = .7 + Math.random() * 1.6;
-          sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - .5, t: performance.now(), life: 420 + Math.random() * 260, c });
+          const a = Math.random() * Math.PI * 2,
+            v = 0.7 + Math.random() * 1.6;
+          sparks.push({
+            x,
+            y,
+            vx: Math.cos(a) * v,
+            vy: Math.sin(a) * v - 0.5,
+            t: performance.now(),
+            life: 420 + Math.random() * 260,
+            c,
+          });
         }
       }
       function collect() {
         const d = DOTS[cur];
-        if (d.first) { pen = true; rec[d.si] = [{ x: d.x, y: d.y }]; }
-        else if (pen) { rec[d.si].push({ x: ptr.x, y: ptr.y }, { x: d.x, y: d.y }); }
-        note(pitch(cur), .3, "triangle", .07);
+        if (d.first) {
+          pen = true;
+          rec[d.si] = [{ x: d.x, y: d.y }];
+        } else if (pen) {
+          // mobile tap: interpolate a gentle curve between last recorded and this dot
+          // so the replay still draws smooth strokes rather than disconnected points
+          const s2 = rec[d.si];
+          const last = s2[s2.length - 1] || { x: d.x, y: d.y };
+          for (let k = 1; k <= 8; k++) {
+            const t = k / 8;
+            s2.push({
+              x: last.x + (d.x - last.x) * t,
+              y: last.y + (d.y - last.y) * t,
+            });
+          }
+        }
+        note(pitch(cur), 0.3, "triangle", 0.07);
         burst(d.x, d.y, "23,26,43");
         if (d.last) pen = false;
         cur++;
         $("#count").textContent = String(cur).padStart(2, "0") + "/" + N;
-        if (cur >= N) { toStop(); return; }
+        if (cur >= N) {
+          toStop();
+          return;
+        }
         const n = DOTS[cur];
-        camTX = n.x; camTY = n.y; dotAt = performance.now();
+        camTX = n.x;
+        camTY = n.y;
+        dotAt = performance.now();
       }
 
-      // desktop: hover moves the cursor freely
-      addEventListener("pointermove", e => { if (phase === "play" && !coarse && e.target !== muteBtn) feed(e.clientX, e.clientY); }, { passive: true });
-      addEventListener("pointerdown", e => { if (phase === "play" && !coarse && e.target !== muteBtn) feed(e.clientX, e.clientY); }, { passive: true });
+      // desktop: hover moves cursor freely
+      addEventListener(
+        "pointermove",
+        (e) => {
+          if (phase === "play" && !coarse && e.target !== muteBtn)
+            feed(e.clientX, e.clientY);
+        },
+        { passive: true },
+      );
+      addEventListener(
+        "pointerdown",
+        (e) => {
+          if (phase === "play" && !coarse && e.target !== muteBtn)
+            feed(e.clientX, e.clientY);
+        },
+        { passive: true },
+      );
 
-      // touch: drag the dot itself
-      let touchId = null;
-      cv.addEventListener("pointerdown", e => {
-        if (phase !== "play" || !coarse) return;
-        // hit-test: is finger on or very near the active dot?
-        const d = DOTS[cur];
-        const dx = e.clientX - sx(d.x), dy = e.clientY - sy(d.y);
-        if (Math.hypot(dx, dy) > Math.max(38, camS * 32)) return; // miss — ignore
-        touchId = e.pointerId;
-        cv.setPointerCapture(e.pointerId);
-        dirUsed = true;
-        feed(e.clientX, e.clientY);
-        e.preventDefault();
-      }, { passive: false });
-      cv.addEventListener("pointermove", e => {
-        if (phase !== "play" || !coarse || e.pointerId !== touchId) return;
-        feed(e.clientX, e.clientY);
-      }, { passive: true });
-      cv.addEventListener("pointerup",     e => { if (e.pointerId === touchId) touchId = null; }, { passive: true });
-      cv.addEventListener("pointercancel", e => { if (e.pointerId === touchId) touchId = null; }, { passive: true });
-      addEventListener("keydown", e => {
+      // mobile: tap anywhere to collect the active dot
+      cv.addEventListener(
+        "pointerdown",
+        (e) => {
+          if (phase !== "play" || !coarse) return;
+          e.preventDefault();
+          A();
+          dirUsed = true;
+          // teleport ptr to tap position then attempt collect
+          ptr.x = wx(e.clientX);
+          ptr.y = wy(e.clientY);
+          // always collect — tap = intent to hit
+          collect();
+        },
+        { passive: false },
+      );
+      addEventListener("keydown", (e) => {
         if (e.key !== "Enter" && e.key !== " ") return;
         if (/BUTTON/.test(document.activeElement?.tagName || "")) return;
         if (phase !== "play") return;
         e.preventDefault();
-        const d = DOTS[cur], a = { ...ptr }, t0 = performance.now();
+        const d = DOTS[cur],
+          a = { ...ptr },
+          t0 = performance.now();
         (function glide() {
           const k = Math.min(1, (performance.now() - t0) / 200);
-          ptr.x = a.x + (d.x - a.x) * k; ptr.y = a.y + (d.y - a.y) * k;
-          if (pen) { const s = rec[d.si]; s.push({ x: ptr.x, y: ptr.y }); }
-          if (k < 1 && phase === "play") { requestAnimationFrame(glide); } else check();
+          ptr.x = a.x + (d.x - a.x) * k;
+          ptr.y = a.y + (d.y - a.y) * k;
+          if (pen) {
+            const s = rec[d.si];
+            s.push({ x: ptr.x, y: ptr.y });
+          }
+          if (k < 1 && phase === "play") {
+            requestAnimationFrame(glide);
+          } else check();
         })();
       });
 
       /* ── phases ── */
       function toPlay() {
-        A(); reset(); phase = "play"; tPhase = performance.now();
+        A();
+        reset();
+        phase = "play";
+        tPhase = performance.now();
         $("#intro").classList.remove("on");
         $("#count").classList.add("on");
-        cursor.x = sx(ptr.x); cursor.y = sy(ptr.y);
-        if (coarse) {
-          pad.classList.add("on"); document.body.classList.add("joy");
-        }
-        const t = $("#tip"); t.textContent = coarse ? "drag the dot to move it" : "move onto it · wasd works too";
+        cursor.x = sx(ptr.x);
+        cursor.y = sy(ptr.y);
+        const t = $("#tip");
+        t.textContent = coarse
+          ? "tap the dot"
+          : "move onto it · wasd works too";
         setTimeout(() => t.classList.add("on"), 500);
         setTimeout(() => t.classList.remove("on"), 4200);
       }
 
-      let LEN = [], SEGS = [], PBTOTAL = 0;
+      let LEN = [],
+        SEGS = [],
+        PBTOTAL = 0;
       function measure() {
-        LEN = rec.map(s => {
+        LEN = rec.map((s) => {
           if (s.length < 2) return 26;
-          let l = 0; for (let i = 1; i < s.length; i++) l += Math.hypot(s[i].x - s[i - 1].x, s[i].y - s[i - 1].y);
+          let l = 0;
+          for (let i = 1; i < s.length; i++)
+            l += Math.hypot(s[i].x - s[i - 1].x, s[i].y - s[i - 1].y);
           return Math.max(l, 26);
         });
         // one segment per stroke, with the pen lifting in between
-        const SPEED = .30, PAUSE = reduce ? 60 : 560;
+        const SPEED = 0.3,
+          PAUSE = reduce ? 60 : 560;
         SEGS = [];
         rec.forEach((s, si) => {
-          SEGS.push({ si, dur: reduce ? 120 : Math.max(460, Math.min(3400, LEN[si] / SPEED)) });
+          SEGS.push({
+            si,
+            dur: reduce
+              ? 120
+              : Math.max(460, Math.min(3400, LEN[si] / SPEED)),
+          });
           if (si < rec.length - 1) SEGS.push({ si: -1, dur: PAUSE });
         });
         PBTOTAL = SEGS.reduce((a, b) => a + b.dur, 0);
       }
 
       function toStop() {
-        phase = "stop"; tPhase = performance.now(); measure();
+        phase = "stop";
+        tPhase = performance.now();
+        measure();
         $("#count").classList.remove("on");
-        pad.classList.remove("on"); document.body.classList.remove("joy"); padClear();
-        $("#deckLbl").textContent = "stopped"; $("#deckNum").textContent = N;
-        fill.style.width = "100%"; head.style.transform = "translateX(100%)";
+        $("#deckLbl").textContent = "stopped";
+        $("#deckNum").textContent = N;
+        fill.style.width = "100%";
+        head.style.transform = "translateX(100%)";
         deck.classList.add("on");
         // start easing back so the whole page is in frame by the time it replays
         endCam();
         setTimeout(toRewind, reduce ? 200 : 1400);
       }
       function toRewind() {
-        phase = "rewind"; tPhase = performance.now();
+        phase = "rewind";
+        tPhase = performance.now();
         $("#deckLbl").textContent = "rewinding";
         if (!muted) {
-          for (let i = 0; i < 20; i++) setTimeout(() => note(920 - i * 40, .07, "sawtooth", .032, .62), i * 115);
+          for (let i = 0; i < 20; i++)
+            setTimeout(
+              () => note(920 - i * 40, 0.07, "sawtooth", 0.032, 0.62),
+              i * 115,
+            );
         }
         setTimeout(toReady, reduce ? 200 : 2400);
       }
       function toReady() {
-        phase = "ready"; tPhase = performance.now();
-        $("#deckLbl").textContent = "\u00a0"; $("#deckNum").textContent = "00";
-        fill.style.width = "0"; head.style.transform = "translateX(0)";
+        phase = "ready";
+        tPhase = performance.now();
+        $("#deckLbl").textContent = "\u00a0";
+        $("#deckNum").textContent = "00";
+        fill.style.width = "0";
+        head.style.transform = "translateX(0)";
         head.parentElement.style.transform = "";
         setTimeout(toPlayback, reduce ? 150 : 900);
       }
       function toPlayback() {
-        phase = "playback"; tPhase = performance.now();
+        phase = "playback";
+        tPhase = performance.now();
         $("#deckLbl").textContent = "playing back";
       }
       function toEnd() {
         phase = "done";
         setTimeout(() => deck.classList.remove("on"), reduce ? 100 : 1100);
         // let the drawing just sit there for a moment before anything changes
-        setTimeout(() => {
-          heatOn = true;
-          if (!muted) [392, 523, 659, 784].forEach((f, i) => setTimeout(() => note(f, 1.6, "sine", .065), i * 190));
-        }, reduce ? 100 : 1000);
+        setTimeout(
+          () => {
+            heatOn = true;
+            if (!muted)
+              [392, 523, 659, 784].forEach((f, i) =>
+                setTimeout(() => note(f, 1.6, "sine", 0.065), i * 190),
+              );
+          },
+          reduce ? 100 : 1000,
+        );
         $("#msg").textContent = MESSAGE;
         const d = new Date();
-        $("#stamp").textContent = "rec ✦ " + String(d.getDate()).padStart(2, "0") + "." + String(d.getMonth() + 1).padStart(2, "0") + "." + String(d.getFullYear()).slice(2);
+        $("#stamp").textContent =
+          "rec ✦ " +
+          String(d.getDate()).padStart(2, "0") +
+          "." +
+          String(d.getMonth() + 1).padStart(2, "0") +
+          "." +
+          String(d.getFullYear()).slice(2);
         setTimeout(() => $("#end").classList.add("on"), reduce ? 200 : 3600);
       }
 
       /* ── draw ── */
       function drawStrokes(prog, heat, squeeze = 0) {
-        ctx.lineCap = "round"; ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
         for (let si = 0; si < rec.length; si++) {
-          const t = prog[si] || 0; if (t <= 0) continue;
-          const s = rec[si]; if (!s.length) continue;
+          const t = prog[si] || 0;
+          if (t <= 0) continue;
+          const s = rec[si];
+          if (!s.length) continue;
           const isHeart = si === HEART_STROKE;
-          ctx.lineWidth = Math.max(2, camS * 7.5 * (isHeart ? 1 + squeeze * .28 : 1));
+          ctx.lineWidth = Math.max(
+            2,
+            camS * 7.5 * (isHeart ? 1 + squeeze * 0.28 : 1),
+          );
           if (isHeart && heat > 0) {
             ctx.strokeStyle = mix("#171a2b", "#e1483c", heat);
-            ctx.shadowColor = "rgba(225,72,60," + (heat * (.45 + squeeze * .4)) + ")";
+            ctx.shadowColor =
+              "rgba(225,72,60," + heat * (0.45 + squeeze * 0.4) + ")";
             ctx.shadowBlur = camS * (22 + squeeze * 26) * heat;
-          } else { ctx.strokeStyle = "#171a2b"; ctx.shadowBlur = 0; }
+          } else {
+            ctx.strokeStyle = "#171a2b";
+            ctx.shadowBlur = 0;
+          }
           if (s.length < 2) {
             ctx.beginPath();
-            ctx.arc(sx(s[0].x), sy(s[0].y), Math.max(2, camS * 4.2) * Math.min(1, t * 1.6), 0, 7);
-            ctx.fillStyle = ctx.strokeStyle; ctx.fill();
+            ctx.arc(
+              sx(s[0].x),
+              sy(s[0].y),
+              Math.max(2, camS * 4.2) * Math.min(1, t * 1.6),
+              0,
+              7,
+            );
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.fill();
             continue;
           }
           const budget = LEN[si] * t;
           let acc = 0;
-          ctx.beginPath(); ctx.moveTo(sx(s[0].x), sy(s[0].y));
+          ctx.beginPath();
+          ctx.moveTo(sx(s[0].x), sy(s[0].y));
           for (let i = 1; i < s.length; i++) {
             const seg = Math.hypot(s[i].x - s[i - 1].x, s[i].y - s[i - 1].y);
-            if (acc + seg <= budget) { ctx.lineTo(sx(s[i].x), sy(s[i].y)); acc += seg; }
-            else {
+            if (acc + seg <= budget) {
+              ctx.lineTo(sx(s[i].x), sy(s[i].y));
+              acc += seg;
+            } else {
               const k = (budget - acc) / seg;
-              ctx.lineTo(sx(s[i - 1].x + (s[i].x - s[i - 1].x) * k), sy(s[i - 1].y + (s[i].y - s[i - 1].y) * k));
+              ctx.lineTo(
+                sx(s[i - 1].x + (s[i].x - s[i - 1].x) * k),
+                sy(s[i - 1].y + (s[i].y - s[i - 1].y) * k),
+              );
               break;
             }
           }
@@ -617,63 +872,93 @@
         ctx.shadowBlur = 0;
       }
       function mix(a, b, t) {
-        const p = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
-        const A2 = p(a), B2 = p(b);
+        const p = (h) => [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16));
+        const A2 = p(a),
+          B2 = p(b);
         return `rgb(${A2.map((v, i) => Math.round(v + (B2[i] - v) * t)).join(",")})`;
       }
 
       function frame(now) {
         requestAnimationFrame(frame);
-        const dt = Math.min(50, now - (frame.t || now)); frame.t = now;
-        const wasdX = dirs.right - dirs.left, wasdY = dirs.down - dirs.up;
+        const dt = Math.min(50, now - (frame.t || now));
+        frame.t = now;
+        const wasdX = dirs.right - dirs.left,
+          wasdY = dirs.down - dirs.up;
         if (phase === "play" && (wasdX || wasdY)) {
-          const nrm = (wasdX && wasdY) ? Math.SQRT1_2 : 1, sp = .5 * dt;
+          const nrm = wasdX && wasdY ? Math.SQRT1_2 : 1,
+            sp = 0.5 * dt;
           feed(
             Math.max(0, Math.min(W, cursor.x + wasdX * nrm * sp)),
-            Math.max(0, Math.min(H, cursor.y + wasdY * nrm * sp))
+            Math.max(0, Math.min(H, cursor.y + wasdY * nrm * sp)),
           );
         }
-        const slow = (phase === "stop" || phase === "rewind" || phase === "ready");
-        camS += (camTS - camS) * (reduce ? 1 : (slow ? .035 : .09));
+        const slow =
+          phase === "stop" || phase === "rewind" || phase === "ready";
+        camS += (camTS - camS) * (reduce ? 1 : slow ? 0.035 : 0.09);
         const dd = Math.hypot(camTX - camX, camTY - camY);
-        const kk = slow ? .035 : Math.min(.16, Math.max(.025, dd / 2600));
-        camX += (camTX - camX) * kk; camY += (camTY - camY) * kk;
+        const kk = slow ? 0.035 : Math.min(0.16, Math.max(0.025, dd / 2600));
+        camX += (camTX - camX) * kk;
+        camY += (camTY - camY) * kk;
 
         ctx.clearRect(0, 0, W, H);
 
         if (phase === "play") {
           for (let i = 1; i < comet.length; i++) {
-            const a = (i / comet.length) * .16 * Math.max(0, 1 - (now - comet[i].t) / 260);
+            const a =
+              (i / comet.length) *
+              0.16 *
+              Math.max(0, 1 - (now - comet[i].t) / 260);
             if (a <= 0) continue;
-            ctx.strokeStyle = `rgba(23,26,43,${a})`; ctx.lineWidth = Math.max(1, camS * 3);
-            ctx.beginPath(); ctx.moveTo(sx(comet[i - 1].x), sy(comet[i - 1].y)); ctx.lineTo(sx(comet[i].x), sy(comet[i].y)); ctx.stroke();
+            ctx.strokeStyle = `rgba(23,26,43,${a})`;
+            ctx.lineWidth = Math.max(1, camS * 3);
+            ctx.beginPath();
+            ctx.moveTo(sx(comet[i - 1].x), sy(comet[i - 1].y));
+            ctx.lineTo(sx(comet[i].x), sy(comet[i].y));
+            ctx.stroke();
           }
-          const d = DOTS[cur], px = sx(d.x), py = sy(d.y);
+          const d = DOTS[cur],
+            px = sx(d.x),
+            py = sy(d.y);
           const fade = Math.min(1, (now - dotAt) / 300);
           const pulse = (Math.sin(now / 460) + 1) / 2;
           ctx.globalAlpha = fade;
-          const dotR = coarse ? Math.max(18, camS * 14) : 4.5;
-          const ringR = coarse ? dotR + 10 + pulse * 16 : 10 + pulse * 13;
-          ctx.strokeStyle = "rgba(23,26,43,.30)"; ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.arc(px, py, ringR, 0, 7); ctx.stroke();
+          const dotR = coarse ? Math.max(22, camS * 18) : 4.5;
+          const ringR = coarse ? dotR + 14 + pulse * 20 : 10 + pulse * 13;
+          ctx.strokeStyle = coarse
+            ? "rgba(23,26,43,.45)"
+            : "rgba(23,26,43,.30)";
+          ctx.lineWidth = coarse ? 1.5 : 1;
+          ctx.beginPath();
+          ctx.arc(px, py, ringR, 0, 7);
+          ctx.stroke();
           ctx.fillStyle = "#171a2b";
-          ctx.beginPath(); ctx.arc(px, py, dotR, 0, 7); ctx.fill();
+          ctx.beginPath();
+          ctx.arc(px, py, dotR, 0, 7);
+          ctx.fill();
           ctx.globalAlpha = 1;
           if (coarse || dirUsed) {
-            const ux = sx(ptr.x), uy = sy(ptr.y);
-            ctx.strokeStyle = "rgba(225,72,60,.85)"; ctx.lineWidth = 1.5;
-            ctx.beginPath(); ctx.arc(ux, uy, 8, 0, 7); ctx.stroke();
+            const ux = sx(ptr.x),
+              uy = sy(ptr.y);
+            ctx.strokeStyle = "rgba(225,72,60,.85)";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(ux, uy, 8, 0, 7);
+            ctx.stroke();
             ctx.fillStyle = "#e1483c";
-            ctx.beginPath(); ctx.arc(ux, uy, 2.2, 0, 7); ctx.fill();
+            ctx.beginPath();
+            ctx.arc(ux, uy, 2.2, 0, 7);
+            ctx.fill();
           }
         }
 
         if (phase === "rewind") {
           const p = Math.min(1, (now - tPhase) / (reduce ? 200 : 2300));
-          head.parentElement.style.transform = `translateY(${(Math.random() - .5) * 1.2}px)`;
+          head.parentElement.style.transform = `translateY(${(Math.random() - 0.5) * 1.2}px)`;
           head.style.transform = `translateX(${(1 - p) * 100}%)`;
-          fill.style.width = ((1 - p) * 100) + "%";
-          $("#deckNum").textContent = String(Math.round((1 - p) * N)).padStart(2, "0");
+          fill.style.width = (1 - p) * 100 + "%";
+          $("#deckNum").textContent = String(
+            Math.round((1 - p) * N),
+          ).padStart(2, "0");
         }
 
         if (phase === "playback" || phase === "done") {
@@ -681,31 +966,50 @@
           const prog = rec.map(() => 0);
           let acc = 0;
           for (const g of SEGS) {
-            if (g.si >= 0) prog[g.si] = Math.min(1, Math.max(0, (el - acc) / g.dur));
+            if (g.si >= 0)
+              prog[g.si] = Math.min(1, Math.max(0, (el - acc) / g.dur));
             acc += g.dur;
           }
-          if (heatOn) heartHeat = Math.min(1, heartHeat + (reduce ? 1 : .008));
+          if (heatOn)
+            heartHeat = Math.min(1, heartHeat + (reduce ? 1 : 0.008));
           // heartbeat: lub-dub once the heart is fully red
           let squeeze = 0;
           if (heartHeat >= 1 && !reduce) {
             const t = (now / 1000) % 1.2;
-            squeeze = Math.exp(-Math.pow((t - .12) * 11, 2)) + .6 * Math.exp(-Math.pow((t - .38) * 11, 2));
-            if (t < .05 && frame.thump !== Math.floor(now / 1200)) { frame.thump = Math.floor(now / 1200); note(74, .16, "sine", .05, -15); }
+            squeeze =
+              Math.exp(-Math.pow((t - 0.12) * 11, 2)) +
+              0.6 * Math.exp(-Math.pow((t - 0.38) * 11, 2));
+            if (t < 0.05 && frame.thump !== Math.floor(now / 1200)) {
+              frame.thump = Math.floor(now / 1200);
+              note(74, 0.16, "sine", 0.05, -15);
+            }
           }
           drawStrokes(prog, heartHeat, squeeze);
 
           // little hearts drifting off the big one
           if (heartHeat >= 1 && !reduce) {
-            if (Math.random() < .045 && floats.length < 14)
-              floats.push({ x: 495 + (Math.random() - .5) * 260, y: 240 + (Math.random() - .5) * 120, t: now, life: 2600 + Math.random() * 1600, s: 7 + Math.random() * 8, dx: (Math.random() - .5) * .35 });
-            ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            floats = floats.filter(f => now - f.t < f.life);
+            if (Math.random() < 0.045 && floats.length < 14)
+              floats.push({
+                x: 495 + (Math.random() - 0.5) * 260,
+                y: 240 + (Math.random() - 0.5) * 120,
+                t: now,
+                life: 2600 + Math.random() * 1600,
+                s: 7 + Math.random() * 8,
+                dx: (Math.random() - 0.5) * 0.35,
+              });
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            floats = floats.filter((f) => now - f.t < f.life);
             for (const f of floats) {
               const p = (now - f.t) / f.life;
-              ctx.globalAlpha = Math.sin(p * Math.PI) * .55;
+              ctx.globalAlpha = Math.sin(p * Math.PI) * 0.55;
               ctx.fillStyle = "#e1483c";
               ctx.font = `${Math.max(6, f.s * camS)}px serif`;
-              ctx.fillText("♥", sx(f.x + f.dx * (now - f.t) * .06), sy(f.y - p * 130));
+              ctx.fillText(
+                "♥",
+                sx(f.x + f.dx * (now - f.t) * 0.06),
+                sy(f.y - p * 130),
+              );
             }
             ctx.globalAlpha = 1;
           }
@@ -713,21 +1017,29 @@
           if (phase === "playback") {
             const p = Math.min(1, el / PBTOTAL);
             head.style.transform = `translateX(${p * 100}%)`;
-            fill.style.width = (p * 100) + "%";
-            $("#deckNum").textContent = String(Math.round(p * N)).padStart(2, "0");
+            fill.style.width = p * 100 + "%";
+            $("#deckNum").textContent = String(Math.round(p * N)).padStart(
+              2,
+              "0",
+            );
             const want = Math.floor(p * N);
-            if (want > frame.lastNote) { frame.lastNote = want; note(pitch(Math.min(N - 1, want)), .55, "sine", .05); }
+            if (want > frame.lastNote) {
+              frame.lastNote = want;
+              note(pitch(Math.min(N - 1, want)), 0.55, "sine", 0.05);
+            }
             if (p >= 1) toEnd();
           }
         }
 
         // sparks live in every phase
-        sparks = sparks.filter(s2 => now - s2.t < s2.life);
+        sparks = sparks.filter((s2) => now - s2.t < s2.life);
         for (const s2 of sparks) {
           const p = (now - s2.t) / s2.life;
-          s2.x += s2.vx; s2.y += s2.vy; s2.vy += .02;
-          ctx.fillStyle = `rgba(${s2.c},${(1 - p) * .7})`;
-          const r = Math.max(.8, (1 - p) * 2.6 * Math.max(.6, camS));
+          s2.x += s2.vx;
+          s2.y += s2.vy;
+          s2.vy += 0.02;
+          ctx.fillStyle = `rgba(${s2.c},${(1 - p) * 0.7})`;
+          const r = Math.max(0.8, (1 - p) * 2.6 * Math.max(0.6, camS));
           ctx.fillRect(sx(s2.x) - r / 2, sy(s2.y) - r / 2, r, r);
         }
       }
@@ -736,23 +1048,34 @@
 
       /* ── chrome ── */
       const muteBtn = $("#mute");
-      const muteLbl = () => { muteBtn.textContent = muted ? "snd ✦ off" : "snd ✦ on"; };
+      const muteLbl = () => {
+        muteBtn.textContent = muted ? "snd ✦ off" : "snd ✦ on";
+      };
       muteBtn.onclick = () => {
-        muted = !muted; muteLbl();
-        try { localStorage.setItem("rw-muted", muted ? "1" : "0") } catch { }
-        if (!muted) note(523, .18, "sine", .06);
+        muted = !muted;
+        muteLbl();
+        try {
+          localStorage.setItem("rw-muted", muted ? "1" : "0");
+        } catch { }
+        if (!muted) note(523, 0.18, "sine", 0.06);
       };
       muteLbl();
 
       $("#start").onclick = toPlay;
       $("#again").onclick = () => {
         $("#end").classList.remove("on");
-        frame.lastNote = -1; heatOn = false; heartHeat = 0; floats = []; sparks = [];
-        phase = "intro"; deck.classList.remove("on"); $("#count").classList.remove("on");
+        frame.lastNote = -1;
+        heatOn = false;
+        heartHeat = 0;
+        floats = [];
+        sparks = [];
+        phase = "intro";
+        deck.classList.remove("on");
+        $("#count").classList.remove("on");
         reset();
         setTimeout(() => $("#intro").classList.add("on"), reduce ? 100 : 520);
       };
-      if (coarse) $("#introSub").textContent = "press and drag the dot";
+      if (coarse) $("#introSub").textContent = "tap the dot";
       reset();
     })();
   </script>
