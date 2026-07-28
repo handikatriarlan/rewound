@@ -554,7 +554,7 @@
           dirUsed = false;
         function padClear() {
           for (const k in dirs) dirs[k] = 0;
-        }
+        } // clears WASD state
         const KEYMAP = {
           ArrowUp: "up",
           KeyW: "up",
@@ -691,7 +691,7 @@
             A();
             // hit-test: tap must land within the dot's visual radius
             const d = DOTS[cur];
-            const HIT = Math.max(28, camS * 18); // generous but not "anywhere"
+            const HIT = Math.max(28, camS * 18); // ~28px min, scales with zoom
             if (Math.hypot(e.clientX - sx(d.x), e.clientY - sy(d.y)) > HIT)
               return;
             dirUsed = true;
@@ -737,8 +737,8 @@
           t.textContent = coarse
             ? "tap the dot"
             : "move onto it · wasd works too";
-          setTimeout(() => t.classList.add("on"), 500);
-          setTimeout(() => t.classList.remove("on"), 4200);
+          setTimeout(() => t.classList.add("on"), coarse ? 200 : 500);
+          setTimeout(() => t.classList.remove("on"), coarse ? 5500 : 4200);
         }
 
         let LEN = [],
@@ -959,7 +959,7 @@
             ctx.arc(px, py, dotR, 0, 7);
             ctx.fill();
             ctx.globalAlpha = 1;
-            if (coarse || dirUsed) {
+            if (!coarse && dirUsed) {
               const ux = sx(ptr.x),
                 uy = sy(ptr.y);
               ctx.strokeStyle = "rgba(225,72,60,.85)";
@@ -1086,6 +1086,7 @@
 
         $("#start").onclick = toPlay;
         $("#again").onclick = () => {
+          dirUsed = false;
           $("#end").classList.remove("on");
           frame.lastNote = -1;
           heatOn = false;
