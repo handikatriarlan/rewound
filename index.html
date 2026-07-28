@@ -159,70 +159,47 @@
       width: 0
     }
 
-    /* ── mobile d-pad ── */
+    /* ── joystick ── */
     #pad {
       position: fixed;
       z-index: 3;
       left: 50%;
       transform: translateX(-50%);
-      bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
-      display: grid;
-      grid-template-columns: repeat(3, 58px);
-      grid-template-rows: repeat(2, 58px);
-      gap: 7px;
+      bottom: max(28px, calc(env(safe-area-inset-bottom) + 18px));
+      width: 120px;
+      height: 120px;
       opacity: 0;
       pointer-events: none;
       transition: opacity .45s ease;
       touch-action: none;
     }
-
-    #pad.on {
-      opacity: 1;
-      pointer-events: auto
+    #pad.on { opacity: 1; pointer-events: auto }
+    /* base ring */
+    #pad::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1.5px solid rgba(23,26,43,.20);
+      background: rgba(236,238,241,.45);
     }
-
-    #pad button {
-      font-family: var(--mono);
-      font-size: 15px;
-      color: var(--ink);
-      background: rgba(236, 238, 241, .6);
-      border: 1px solid rgba(23, 26, 43, .3);
-      border-radius: 2px;
-      padding: 0;
-      cursor: pointer;
-      touch-action: none;
-      user-select: none;
-      -webkit-user-select: none;
-      transition: background .12s ease, color .12s ease;
-    }
-
-    #pad button.hold {
+    /* thumb knob */
+    #jknob {
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
       background: var(--ink);
-      color: var(--paper)
+      opacity: .18;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      transition: opacity .2s ease;
+      pointer-events: none;
     }
-
-    #pad [data-d="up"] {
-      grid-column: 2;
-      grid-row: 1
-    }
-
-    #pad [data-d="left"] {
-      grid-column: 1;
-      grid-row: 2
-    }
-
-    #pad [data-d="down"] {
-      grid-column: 2;
-      grid-row: 2
-    }
-
-    #pad [data-d="right"] {
-      grid-column: 3;
-      grid-row: 2
-    }
+    #pad.active #jknob { opacity: .55 }
 
     body.joy #tip {
-      bottom: max(172px, calc(env(safe-area-inset-bottom) + 162px));
+      bottom: max(170px, calc(env(safe-area-inset-bottom) + 158px));
     }
 
     /* ── sound toggle ── */
@@ -374,10 +351,7 @@
 
   <button id="mute" aria-label="toggle sound">snd ✦ on</button>
 
-  <div id="pad" aria-hidden="true">
-    <button data-d="up" tabindex="-1">↑</button>
-    <button data-d="left" tabindex="-1">←</button>
-    <button data-d="down" tabindex="-1">↓</button>
+  <div id="pad" aria-hidden="true"><div id="jknob"></div>
     <button data-d="right" tabindex="-1">→</button>
   </div>
 
@@ -474,25 +448,50 @@
 
       const deck = $("#deck"), fill = $("#fill"), head = $("#head");
 
-      /* ── d-pad + wasd ── */
+      /* ── joystick ── */
       const pad = $("#pad");
-      const dirs = { up: 0, down: 0, left: 0, right: 0 };
+      const knob = $("#jknob");
+      const JMAX = 44;           // max knob travel px from centre
+      const DEADZONE = 6;        // px — below this: no movement
+      const SPEED = 0.28;        // world-units per ms per normalised axis (was 0.5 — gentler)
+      let jx = 0, jy = 0;       // normalised -1..1
+      let jActive = false, jPid = null, jOx = 0, jOy = 0;
+      let dirs = { up: 0, down: 0, left: 0, right: 0 }; // kept for WASD compat
       let cursor = { x: 0, y: 0 }, dirUsed = false;
-      function padClear() {
-        for (const k in dirs) dirs[k] = 0;
-        pad.querySelectorAll("button").forEach(b => b.classList.remove("hold"));
+
+      function jUpdate(dx, dy) {
+        const dist = Math.hypot(dx, dy);
+        const clamped = Math.min(dist, JMAX);
+        const nx = dist > 0 ? dx / dist : 0;
+        const ny = dist > 0 ? dy / dist : 0;
+        jx = dist > DEADZONE ? nx * (clamped / JMAX) : 0;
+        jy = dist > DEADZONE ? ny * (clamped / JMAX) : 0;
+        knob.style.transform = `translate(calc(-50% + ${nx * clamped}px), calc(-50% + ${ny * clamped}px))`;
       }
-      pad.querySelectorAll("button").forEach(b => {
-        const d = b.dataset.d;
-        const off = e => { dirs[d] = 0; b.classList.remove("hold"); };
-        b.addEventListener("pointerdown", e => {
-          e.stopPropagation(); e.preventDefault();
-          dirs[d] = 1; dirUsed = true; b.classList.add("hold");
-          b.setPointerCapture(e.pointerId);
-        });
-        b.addEventListener("pointerup", off);
-        b.addEventListener("pointercancel", off);
+      function jReset() {
+        jx = 0; jy = 0; jActive = false; jPid = null;
+        pad.classList.remove("active");
+        knob.style.transform = "translate(-50%,-50%)";
+      }
+
+      pad.addEventListener("pointerdown", e => {
+        e.preventDefault(); e.stopPropagation();
+        pad.setPointerCapture(e.pointerId);
+        jPid = e.pointerId; jActive = true; dirUsed = true;
+        pad.classList.add("active");
+        const r = pad.getBoundingClientRect();
+        jOx = r.left + r.width / 2; jOy = r.top + r.height / 2;
+        jUpdate(e.clientX - jOx, e.clientY - jOy);
       });
+      pad.addEventListener("pointermove", e => {
+        if (!jActive || e.pointerId !== jPid) return;
+        jUpdate(e.clientX - jOx, e.clientY - jOy);
+      });
+      pad.addEventListener("pointerup",     e => { if (e.pointerId === jPid) jReset(); });
+      pad.addEventListener("pointercancel", e => { if (e.pointerId === jPid) jReset(); });
+
+      function padClear() { jReset(); for (const k in dirs) dirs[k] = 0; }
+
       const KEYMAP = {
         ArrowUp: "up", KeyW: "up", ArrowDown: "down", KeyS: "down",
         ArrowLeft: "left", KeyA: "left", ArrowRight: "right", KeyD: "right"
@@ -576,7 +575,7 @@
         if (coarse) {
           pad.classList.add("on"); document.body.classList.add("joy");
         }
-        const t = $("#tip"); t.textContent = coarse ? "hold the arrows to move" : "move onto it · wasd works too";
+        const t = $("#tip"); t.textContent = coarse ? "drag the circle to move" : "move onto it · wasd works too";
         setTimeout(() => t.classList.add("on"), 500);
         setTimeout(() => t.classList.remove("on"), 4200);
       }
@@ -686,12 +685,14 @@
       function frame(now) {
         requestAnimationFrame(frame);
         const dt = Math.min(50, now - (frame.t || now)); frame.t = now;
-        const mvx = dirs.right - dirs.left, mvy = dirs.down - dirs.up;
+        const wasdX = dirs.right - dirs.left, wasdY = dirs.down - dirs.up;
+        const mvx = jActive ? jx : (wasdX && wasdY ? wasdX * Math.SQRT1_2 : wasdX);
+        const mvy = jActive ? jy : (wasdX && wasdY ? wasdY * Math.SQRT1_2 : wasdY);
         if (phase === "play" && (mvx || mvy)) {
-          const nrm = (mvx && mvy) ? Math.SQRT1_2 : 1, sp = .5 * dt;
+          const sp = SPEED * dt;
           feed(
-            Math.max(0, Math.min(W, cursor.x + mvx * nrm * sp)),
-            Math.max(0, Math.min(H, cursor.y + mvy * nrm * sp))
+            Math.max(0, Math.min(W, cursor.x + mvx * sp)),
+            Math.max(0, Math.min(H, cursor.y + mvy * sp))
           );
         }
         const slow = (phase === "stop" || phase === "rewind" || phase === "ready");
@@ -811,7 +812,7 @@
         reset();
         setTimeout(() => $("#intro").classList.add("on"), reduce ? 100 : 520);
       };
-      if (coarse) $("#introSub").textContent = "steer with the arrows";
+      if (coarse) $("#introSub").textContent = "drag the circle below to move";
       reset();
     })();
   </script>
