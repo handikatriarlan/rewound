@@ -184,6 +184,55 @@
         width: 0;
       }
 
+      /* ── joystick ── */
+      #pad {
+        position: fixed;
+        z-index: 3;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: max(28px, calc(env(safe-area-inset-bottom) + 18px));
+        width: 120px;
+        height: 120px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.45s ease;
+        touch-action: none;
+      }
+      #pad.on {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      /* base ring */
+      #pad::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1.5px solid rgba(23, 26, 43, 0.2);
+        background: rgba(236, 238, 241, 0.45);
+      }
+      /* thumb knob */
+      #jknob {
+        position: absolute;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: var(--ink);
+        opacity: 0.18;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+      }
+      #pad.active #jknob {
+        opacity: 0.55;
+      }
+
+      body.joy #tip {
+        bottom: max(170px, calc(env(safe-area-inset-bottom) + 158px));
+      }
+
       /* ── sound toggle ── */
       #mute {
         position: fixed;
@@ -338,14 +387,19 @@
 
     <canvas id="cv"></canvas>
 
-    <div id="count" class="chrome">00/35</div>
+    <div id="count" class="chrome">00/32</div>
     <div id="tip" class="chrome"></div>
 
     <button id="mute" aria-label="toggle sound">snd ✦ on</button>
 
+    <div id="pad" aria-hidden="true">
+      <div id="jknob"></div>
+      <button data-d="right" tabindex="-1">→</button>
+    </div>
+
     <div id="deck">
       <div class="lbl">
-        <span id="deckLbl">rewinding</span><span id="deckNum">35</span>
+        <span id="deckLbl">rewinding</span><span id="deckNum">32</span>
       </div>
       <div class="track">
         <div class="fill" id="fill"></div>
@@ -378,13 +432,13 @@
         /* ── the shape you'll trace, without knowing it ── */
         const STROKES = [
           [
-            [76, 80],
-            [164, 80],
+            [76, 90],
+            [164, 90],
           ],
           [
-            [120, 80],
-            [120, 187],
-            [120, 293],
+            [120, 90],
+            [120, 193],
+            [120, 297],
             [120, 400],
           ],
           [
@@ -392,35 +446,32 @@
             [164, 400],
           ],
           [
-            [516, 80],
-            [506, 108],
-            [456, 172],
-            [390, 250],
-            [372, 338],
-            [421, 400],
-            [486, 388],
-            [515, 337],
-            [517, 337],
-            [546, 388],
-            [611, 400],
-            [660, 338],
-            [642, 250],
-            [576, 172],
-            [526, 108],
-            [516, 80],
+            [495, 395],
+            [485, 371],
+            [432, 317],
+            [363, 250],
+            [344, 175],
+            [395, 122],
+            [464, 132],
+            [494, 176],
+            [526, 132],
+            [595, 122],
+            [646, 175],
+            [627, 250],
+            [558, 317],
+            [505, 371],
+            [495, 395],
           ],
           [
-            [811, 80],
-            [811, 170],
-            [811, 256],
-            [811, 310],
-            [844, 368],
-            [876, 400],
-            [908, 368],
-            [941, 310],
-            [941, 256],
-            [941, 170],
-            [941, 80],
+            [770, 178],
+            [770, 258],
+            [772, 330],
+            [800, 382],
+            [848, 400],
+            [896, 380],
+            [912, 322],
+            [912, 248],
+            [912, 178],
           ],
         ];
         const HEART_STROKE = 3;
@@ -551,13 +602,69 @@
           fill = $("#fill"),
           head = $("#head");
 
-        /* ── input ── */
-        const dirs = { up: 0, down: 0, left: 0, right: 0 };
+        /* ── joystick ── */
+        const pad = $("#pad");
+        const knob = $("#jknob");
+        const JMAX = 44; // max knob travel px from centre
+        const DEADZONE = coarse ? 10 : 6; // px — below this: no movement (wider on touch)
+        const SPEED = coarse ? 0.14 : 0.28; // world-units per ms per normalised axis (half on touch)
+        let jx = 0,
+          jy = 0; // normalised -1..1
+        let jActive = false,
+          jPid = null,
+          jOx = 0,
+          jOy = 0;
+        let dirs = { up: 0, down: 0, left: 0, right: 0 }; // kept for WASD compat
         let cursor = { x: 0, y: 0 },
           dirUsed = false;
+
+        function jUpdate(dx, dy) {
+          const dist = Math.hypot(dx, dy);
+          const clamped = Math.min(dist, JMAX);
+          const nx = dist > 0 ? dx / dist : 0;
+          const ny = dist > 0 ? dy / dist : 0;
+          jx = dist > DEADZONE ? nx * (clamped / JMAX) : 0;
+          jy = dist > DEADZONE ? ny * (clamped / JMAX) : 0;
+          knob.style.transform = `translate(calc(-50% + ${nx * clamped}px), calc(-50% + ${ny * clamped}px))`;
+        }
+        function jReset() {
+          jx = 0;
+          jy = 0;
+          jActive = false;
+          jPid = null;
+          pad.classList.remove("active");
+          knob.style.transform = "translate(-50%,-50%)";
+        }
+
+        pad.addEventListener("pointerdown", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          pad.setPointerCapture(e.pointerId);
+          jPid = e.pointerId;
+          jActive = true;
+          dirUsed = true;
+          pad.classList.add("active");
+          const r = pad.getBoundingClientRect();
+          jOx = r.left + r.width / 2;
+          jOy = r.top + r.height / 2;
+          jUpdate(e.clientX - jOx, e.clientY - jOy);
+        });
+        pad.addEventListener("pointermove", (e) => {
+          if (!jActive || e.pointerId !== jPid) return;
+          jUpdate(e.clientX - jOx, e.clientY - jOy);
+        });
+        pad.addEventListener("pointerup", (e) => {
+          if (e.pointerId === jPid) jReset();
+        });
+        pad.addEventListener("pointercancel", (e) => {
+          if (e.pointerId === jPid) jReset();
+        });
+
         function padClear() {
+          jReset();
           for (const k in dirs) dirs[k] = 0;
-        } // clears WASD state
+        }
+
         const KEYMAP = {
           ArrowUp: "up",
           KeyW: "up",
@@ -640,17 +747,7 @@
             pen = true;
             rec[d.si] = [{ x: d.x, y: d.y }];
           } else if (pen) {
-            // mobile tap: interpolate a gentle curve between last recorded and this dot
-            // so the replay still draws smooth strokes rather than disconnected points
-            const s2 = rec[d.si];
-            const last = s2[s2.length - 1] || { x: d.x, y: d.y };
-            for (let k = 1; k <= 8; k++) {
-              const t = k / 8;
-              s2.push({
-                x: last.x + (d.x - last.x) * t,
-                y: last.y + (d.y - last.y) * t,
-              });
-            }
+            rec[d.si].push({ x: ptr.x, y: ptr.y }, { x: d.x, y: d.y });
           }
           note(pitch(cur), 0.3, "triangle", 0.07);
           burst(d.x, d.y, "23,26,43");
@@ -667,7 +764,6 @@
           dotAt = performance.now();
         }
 
-        // desktop: hover moves cursor freely
         addEventListener(
           "pointermove",
           (e) => {
@@ -683,26 +779,6 @@
               feed(e.clientX, e.clientY);
           },
           { passive: true },
-        );
-
-        // mobile: tap the active dot to collect it
-        cv.addEventListener(
-          "pointerdown",
-          (e) => {
-            if (phase !== "play" || !coarse) return;
-            e.preventDefault();
-            A();
-            // hit-test: tap must land within the dot's visual radius
-            const d = DOTS[cur];
-            const HIT = Math.max(28, camS * 18); // ~28px min, scales with zoom
-            if (Math.hypot(e.clientX - sx(d.x), e.clientY - sy(d.y)) > HIT)
-              return;
-            dirUsed = true;
-            ptr.x = d.x;
-            ptr.y = d.y;
-            collect();
-          },
-          { passive: false },
         );
         addEventListener("keydown", (e) => {
           if (e.key !== "Enter" && e.key !== " ") return;
@@ -736,12 +812,16 @@
           $("#count").classList.add("on");
           cursor.x = sx(ptr.x);
           cursor.y = sy(ptr.y);
+          if (coarse) {
+            pad.classList.add("on");
+            document.body.classList.add("joy");
+          }
           const t = $("#tip");
           t.textContent = coarse
-            ? "tap the dot"
+            ? "drag the circle to move"
             : "move onto it · wasd works too";
-          setTimeout(() => t.classList.add("on"), coarse ? 200 : 500);
-          setTimeout(() => t.classList.remove("on"), coarse ? 5500 : 4200);
+          setTimeout(() => t.classList.add("on"), 500);
+          setTimeout(() => t.classList.remove("on"), 4200);
         }
 
         let LEN = [],
@@ -776,6 +856,9 @@
           tPhase = performance.now();
           measure();
           $("#count").classList.remove("on");
+          pad.classList.remove("on");
+          document.body.classList.remove("joy");
+          padClear();
           $("#deckLbl").textContent = "stopped";
           $("#deckNum").textContent = N;
           fill.style.width = "100%";
@@ -910,12 +993,21 @@
           frame.t = now;
           const wasdX = dirs.right - dirs.left,
             wasdY = dirs.down - dirs.up;
-          if (phase === "play" && (wasdX || wasdY)) {
-            const nrm = wasdX && wasdY ? Math.SQRT1_2 : 1,
-              sp = 0.5 * dt;
+          const mvx = jActive
+            ? jx
+            : wasdX && wasdY
+              ? wasdX * Math.SQRT1_2
+              : wasdX;
+          const mvy = jActive
+            ? jy
+            : wasdX && wasdY
+              ? wasdY * Math.SQRT1_2
+              : wasdY;
+          if (phase === "play" && (mvx || mvy)) {
+            const sp = SPEED * dt;
             feed(
-              Math.max(0, Math.min(W, cursor.x + wasdX * nrm * sp)),
-              Math.max(0, Math.min(H, cursor.y + wasdY * nrm * sp)),
+              Math.max(0, Math.min(W, cursor.x + mvx * sp)),
+              Math.max(0, Math.min(H, cursor.y + mvy * sp)),
             );
           }
           const slow =
@@ -948,21 +1040,17 @@
             const fade = Math.min(1, (now - dotAt) / 300);
             const pulse = (Math.sin(now / 460) + 1) / 2;
             ctx.globalAlpha = fade;
-            const dotR = coarse ? Math.max(8, camS * 7) : 4.5;
-            const ringR = coarse ? dotR + 8 + pulse * 12 : 10 + pulse * 13;
-            ctx.strokeStyle = coarse
-              ? "rgba(23,26,43,.38)"
-              : "rgba(23,26,43,.30)";
-            ctx.lineWidth = coarse ? 1.5 : 1;
+            ctx.strokeStyle = "rgba(23,26,43,.30)";
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.arc(px, py, ringR, 0, 7);
+            ctx.arc(px, py, 10 + pulse * 13, 0, 7);
             ctx.stroke();
             ctx.fillStyle = "#171a2b";
             ctx.beginPath();
-            ctx.arc(px, py, dotR, 0, 7);
+            ctx.arc(px, py, 4.5, 0, 7);
             ctx.fill();
             ctx.globalAlpha = 1;
-            if (!coarse && dirUsed) {
+            if (coarse || dirUsed) {
               const ux = sx(ptr.x),
                 uy = sy(ptr.y);
               ctx.strokeStyle = "rgba(225,72,60,.85)";
@@ -1089,7 +1177,6 @@
 
         $("#start").onclick = toPlay;
         $("#again").onclick = () => {
-          dirUsed = false;
           $("#end").classList.remove("on");
           frame.lastNote = -1;
           heatOn = false;
@@ -1102,7 +1189,8 @@
           reset();
           setTimeout(() => $("#intro").classList.add("on"), reduce ? 100 : 520);
         };
-        if (coarse) $("#introSub").textContent = "tap the dot";
+        if (coarse)
+          $("#introSub").textContent = "drag the circle below to move";
         reset();
       })();
     </script>
